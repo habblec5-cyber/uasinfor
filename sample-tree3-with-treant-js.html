@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Family Tree dengan Treant.js</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Treant CSS -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/treant-js/1.0/Treant.css"
+  />
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+      text-align: center;
+    }
+
+    #tree {
+      width: 100%;
+      height: 550px;
+      margin-top: 20px;
+    }
+
+    .controls {
+      margin-top: 15px;
+    }
+
+    .controls input {
+      padding: 6px;
+      margin: 3px;
+    }
+
+    .controls button {
+      padding: 6px 12px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Visualisasi Family Tree (Treant.js)</h1>
+
+  <!-- LEVEL 9: INPUT DINAMIS -->
+  <div class="controls">
+    <input type="text" id="parentName" placeholder="Nama Parent">
+    <input type="text" id="childName" placeholder="Nama Anak">
+    <button onclick="addNode()">Tambah Node</button>
+  </div>
+
+  <div id="tree"></div>
+
+  <!-- Raphael.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.3.0/raphael.min.js"></script>
+
+  <!-- Treant.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/treant-js/1.0/Treant.min.js"></script>
+
+  <script>
+    // ===============================
+    // STRUKTUR DATA TREE (DOSEN)
+    // ===============================
+    var chartConfig = {
+      chart: {
+        container: "#tree",
+        rootOrientation: "NORTH",
+        nodeAlign: "CENTER",
+        connectors: { type: "step" },
+        node: { HTMLclass: "node" }
+      },
+
+      nodeStructure: {
+        text: {
+          name: "Abdul Muthalib + Fatimah binti Amr",
+          title: "Kakek/Nenek"
+        },
+        children: [
+          {
+            text: {
+              name: "Abdullah + Aminah binti Wahb",
+              title: "Ayah/Ibu"
+            },
+            children: [
+              {
+                text: {
+                  name: "Nabi Muhammad",
+                  title: "Anak"
+                }
+              }
+            ]
+          },
+          {
+            text: {
+              name: "Abu Thalib",
+              title: "Paman"
+            }
+          }
+        ]
+      }
+    };
+
+    // render awal
+    new Treant(chartConfig);
+
+    // ===============================
+    // LEVEL 9: TAMBAH NODE DINAMIS
+    // ===============================
+    function findNode(name, node) {
+      if (node.text.name === name) return node;
+      if (!node.children) return null;
+
+      for (let i = 0; i < node.children.length; i++) {
+        let result = findNode(name, node.children[i]);
+        if (result) return result;
+      }
+      return null;
+    }
+
+    function addNode() {
+      var parent = document.getElementById("parentName").value.trim();
+      var child = document.getElementById("childName").value.trim();
+
+      if (parent === "" || child === "") {
+        alert("Isi parent dan anak!");
+        return;
+      }
+
+      var parentNode = findNode(parent, chartConfig.nodeStructure);
+
+      if (!parentNode) {
+        alert("Parent tidak ditemukan!");
+        return;
+      }
+
+      if (!parentNode.children) {
+        parentNode.children = [];
+      }
+
+      parentNode.children.push({
+        text: {
+          name: child,
+          title: "Node baru"
+        }
+      });
+
+      document.getElementById("tree").innerHTML = "";
+      new Treant(chartConfig);
+
+      document.getElementById("parentName").value = "";
+      document.getElementById("childName").value = "";
+    }
+  </script>
+
+</body>
+</html>
