@@ -1,6 +1,10 @@
 /* =========================
    GLOBAL
 ========================= */
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   font-family: Arial, sans-serif;
@@ -32,7 +36,7 @@ nav button {
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  background: #6b7f73; /* abu kehijauan */
+  background: #6b7f73;
   color: #ffffff;
   transition: 0.2s;
 }
@@ -42,7 +46,7 @@ nav button:hover {
 }
 
 nav button.active {
-  background: #4f7c63; /* hijau lumut lebih hidup */
+  background: #4f7c63;
 }
 
 /* =========================
@@ -68,15 +72,34 @@ section.active {
 }
 
 /* =========================
-   TREE LIST
+   FORM
 ========================= */
-ul.tree {
-  list-style-type: none;
-  padding-left: 20px;
+form label {
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
 }
 
-ul.tree li {
-  margin: 6px 0;
+form input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+  border-radius: 6px;
+  border: 1px solid #bfc9c3;
+}
+
+form button {
+  margin-top: 14px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #4f7c63;
+  color: white;
+  cursor: pointer;
+}
+
+form button:hover {
+  background: #3f5f4c;
 }
 
 /* =========================
@@ -85,20 +108,9 @@ ul.tree li {
 .note {
   margin-top: 16px;
   padding: 14px;
-  background: #e8f1eb; /* hijau muda elegan */
+  background: #e8f1eb;
   border-left: 5px solid #6a8f7b;
   border-radius: 4px;
-}
-
-/* =========================
-   FOOTER
-========================= */
-footer {
-  background: #d6d3cf; /* abu monyet */
-  text-align: center;
-  padding: 12px;
-  font-size: 14px;
-  color: #333;
 }
 
 /* =========================
@@ -115,11 +127,12 @@ img {
    PROFIL
 ========================= */
 .img-profil {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   height: 150px;
   width: 150px;
-  text-align: center;
-  border: solid 2px #9ca3af;
+  border: 2px solid #9ca3af;
   border-radius: 50%;
   transition: 0.3s;
   font-size: 600%;
@@ -128,6 +141,50 @@ img {
 
 .img-profil:hover {
   transform: scale(1.1);
+}
+
+/* =========================
+   TREE (TREANT.JS)
+========================= */
+#tree {
+  width: 100%;
+  min-height: 600px;
+  overflow-x: auto;
+  margin-top: 20px;
+}
+
+.node {
+  background: #ffffff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  text-align: center;
+  min-width: 120px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* WARNA NODE */
+.node.blue {
+  border: 2px solid #2563eb;
+}
+
+.node.red {
+  border: 2px solid #dc2626;
+}
+
+.node.green {
+  border: 2px solid #16a34a;
+}
+
+/* =========================
+   FOOTER
+========================= */
+footer {
+  background: #d6d3cf;
+  text-align: center;
+  padding: 12px;
+  font-size: 14px;
+  color: #333;
 }
 
 /* =========================

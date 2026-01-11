@@ -1,102 +1,86 @@
 /********************************
- * NAVIGASI HALAMAN (DOSEN)
+ * NAVIGASI (DOSEN)
  ********************************/
 function showPage(pageId) {
-  const sections = document.querySelectorAll("main section");
-  sections.forEach((s) => s.classList.remove("active"));
+  document
+    .querySelectorAll("main section")
+    .forEach((s) => s.classList.remove("active"));
   document.getElementById(pageId).classList.add("active");
 }
 
 /********************************
- * DATA TREE (PERSISTENT)
- * inilah POHON-nya
+ * DATA TREE (TREE3 → DIKEMBANGKAN)
  ********************************/
 let familyTree = JSON.parse(localStorage.getItem("familyTree")) || {
-  text: {
-    name: "👳‍♂️ Nabi Muhammad ﷺ",
-    title: "Nabi"
-  },
-  role: "nabi",
+  text: { name: "👳‍♂️ Nabi Muhammad ﷺ", title: "Nabi" },
   HTMLclass: "green",
   children: []
 };
 
 /********************************
- * DFS SEARCH (CARI PARENT)
+ * DFS – CARI NODE
  ********************************/
 function findNode(node, name) {
   if (node.text.name.toLowerCase().includes(name.toLowerCase())) {
     return node;
   }
-
   if (!node.children) return null;
 
   for (let child of node.children) {
     const found = findNode(child, name);
     if (found) return found;
   }
-
   return null;
 }
 
 /********************************
- * TAMBAH NODE (FORM DOSEN)
+ * TAMBAH NODE (FITUR 1–3)
  ********************************/
-document
-  .getElementById("familyForm")
-  .addEventListener("submit", function (e) {
-    e.preventDefault();
+document.getElementById("familyForm").addEventListener("submit", function (e) {
+  e.preventDefault();
 
-    const name = document.getElementById("name").value.trim();
-    const role = document.getElementById("role").value.trim().toLowerCase();
-    const parentName = document.getElementById("parent").value.trim();
+  const name = document.getElementById("name").value.trim();
+  const role = document.getElementById("role").value.trim().toLowerCase();
+  const parentName = document.getElementById("parent").value.trim();
 
-    let emoji = "👤";
-    let color = "blue";
+  let emoji = "👤";
+  let color = "blue";
 
-    if (role.includes("ayah") || role.includes("ibu")) {
-      emoji = "👩‍🦳";
-      color = "blue";
-    } else if (role.includes("paman")) {
-      emoji = "👨";
-      color = "red";
-    } else if (role.includes("anak")) {
-      emoji = "👶";
-      color = "green";
+  if (role.includes("ayah")) {
+    emoji = "👨";
+    color = "blue";
+  } else if (role.includes("ibu")) {
+    emoji = "👩";
+    color = "red";
+  } else if (role.includes("anak")) {
+    emoji = "👶";
+    color = "green";
+  }
+
+  let parentNode = familyTree;
+  if (parentName !== "") {
+    parentNode = findNode(familyTree, parentName);
+    if (!parentNode) {
+      alert("Parent tidak ditemukan");
+      return;
     }
+  }
 
-    let parentNode = familyTree;
-
-    if (parentName !== "") {
-      parentNode = findNode(familyTree, parentName);
-
-      if (!parentNode) {
-        alert("Parent tidak ditemukan");
-        return;
-      }
-
-      if (parentNode.role === "nabi") {
-        alert("Nabi Muhammad ﷺ tidak memiliki anak");
-        return;
-      }
-    }
-
-    parentNode.children.push({
-      text: {
-        name: `${emoji} ${name}`,
-        title: role
-      },
-      role: role,
-      HTMLclass: color,
-      children: []
-    });
-
-    saveAndRender();
-    this.reset();
+  parentNode.children.push({
+    text: {
+      name: `${emoji} ${name}`,
+      title: role
+    },
+    HTMLclass: color,
+    children: []
   });
 
+  saveAndRender();
+  this.reset();
+});
+
 /********************************
- * DELETE NODE (OPSIONAL)
+ * DELETE NODE (FITUR 5)
  ********************************/
 function deleteRecursive(node, name) {
   if (!node.children) return;
@@ -108,25 +92,26 @@ function deleteRecursive(node, name) {
   node.children.forEach((c) => deleteRecursive(c, name));
 }
 
+// bisa dipanggil manual dari console:
+// deleteByName("Abdullah")
 window.deleteByName = function (name) {
   deleteRecursive(familyTree, name);
   saveAndRender();
 };
 
 /********************************
- * SIMPAN + RENDER TREE
+ * SIMPAN + RENDER (FITUR 4)
  ********************************/
 function saveAndRender() {
   localStorage.setItem("familyTree", JSON.stringify(familyTree));
 
-  const visualSection = document.getElementById("visual");
+  const visual = document.getElementById("visual");
   let treeDiv = document.getElementById("tree");
 
   if (!treeDiv) {
     treeDiv = document.createElement("div");
     treeDiv.id = "tree";
-    treeDiv.style.height = "600px";
-    visualSection.appendChild(treeDiv);
+    visual.appendChild(treeDiv);
   }
 
   treeDiv.innerHTML = "";
@@ -135,7 +120,6 @@ function saveAndRender() {
     chart: {
       container: "#tree",
       rootOrientation: "NORTH",
-      nodeAlign: "CENTER",
       connectors: { type: "step" },
       node: { HTMLclass: "node" }
     },
