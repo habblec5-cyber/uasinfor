@@ -1,0 +1,142 @@
+/* =========================
+   GLOBAL
+========================= */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #eef3ef; /* hijau muda soft */
+  color: #2f3e34;
+}
+
+/* =========================
+   HEADER
+========================= */
+header {
+  background: #3f5f4c; /* hijau lumut */
+  color: #f5f7f6;
+  padding: 18px;
+}
+
+/* =========================
+   NAVBAR
+========================= */
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+nav button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #6b7f73; /* abu kehijauan */
+  color: #ffffff;
+  transition: 0.2s;
+}
+
+nav button:hover {
+  background: #556b5f;
+}
+
+nav button.active {
+  background: #4f7c63; /* hijau lumut lebih hidup */
+}
+
+/* =========================
+   MAIN CONTENT
+========================= */
+main {
+  background: #ffffff;
+  padding: 22px;
+  min-height: 80vh;
+  border-radius: 8px;
+  margin: 16px;
+}
+
+/* =========================
+   SECTION
+========================= */
+section {
+  display: none;
+}
+
+section.active {
+  display: block;
+}
+
+/* =========================
+   TREE LIST
+========================= */
+ul.tree {
+  list-style-type: none;
+  padding-left: 20px;
+}
+
+ul.tree li {
+  margin: 6px 0;
+}
+
+/* =========================
+   NOTE BOX
+========================= */
+.note {
+  margin-top: 16px;
+  padding: 14px;
+  background: #e8f1eb; /* hijau muda elegan */
+  border-left: 5px solid #6a8f7b;
+  border-radius: 4px;
+}
+
+/* =========================
+   FOOTER
+========================= */
+footer {
+  background: #d6d3cf; /* abu monyet */
+  text-align: center;
+  padding: 12px;
+  font-size: 14px;
+  color: #333;
+}
+
+/* =========================
+   IMAGE
+========================= */
+img {
+  max-width: 100%;
+  margin-top: 14px;
+  border-radius: 6px;
+  border: 1px solid #bfc9c3;
+}
+
+/* =========================
+   PROFIL
+========================= */
+.img-profil {
+  display: inline-block;
+  height: 150px;
+  width: 150px;
+  text-align: center;
+  border: solid 2px #9ca3af;
+  border-radius: 50%;
+  transition: 0.3s;
+  font-size: 600%;
+  background: #f0f4f1;
+}
+
+.img-profil:hover {
+  transform: scale(1.1);
+}
+
+/* =========================
+   UTIL
+========================= */
+.bold {
+  font-weight: bold;
+}
+
+.red {
+  color: #b91c1c;
+}
