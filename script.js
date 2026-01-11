@@ -1,130 +1,106 @@
-/********************************
- * NAVIGASI (DOSEN)
- ********************************/
-function showPage(pageId) {
-  document
-    .querySelectorAll("main section")
-    .forEach((s) => s.classList.remove("active"));
-  document.getElementById(pageId).classList.add("active");
+/* =========================
+   NAVIGASI
+========================= */
+function showPage(id) {
+  document.querySelectorAll("section").forEach(s =>
+    s.classList.remove("active")
+  );
+  document.getElementById(id).classList.add("active");
 }
 
-/********************************
- * DATA TREE (TREE3 → DIKEMBANGKAN)
- ********************************/
-let familyTree = JSON.parse(localStorage.getItem("familyTree")) || {
-  text: { name: "👳‍♂️ Nabi Muhammad ﷺ", title: "Nabi" },
-  HTMLclass: "green",
-  children: []
-};
+/* =========================
+   DATA
+========================= */
+let nodes = JSON.parse(localStorage.getItem("nodes")) || [];
 
-/********************************
- * DFS – CARI NODE
- ********************************/
-function findNode(node, name) {
-  if (node.text.name.toLowerCase().includes(name.toLowerCase())) {
-    return node;
-  }
-  if (!node.children) return null;
-
-  for (let child of node.children) {
-    const found = findNode(child, name);
-    if (found) return found;
-  }
-  return null;
+/* =========================
+   SIMPAN
+========================= */
+function save() {
+  localStorage.setItem("nodes", JSON.stringify(nodes));
 }
 
-/********************************
- * TAMBAH NODE (FITUR 1–3)
- ********************************/
-document.getElementById("familyForm").addEventListener("submit", function (e) {
+/* =========================
+   TAMBAH NODE
+========================= */
+document.getElementById("familyForm").addEventListener("submit", e => {
   e.preventDefault();
 
   const name = document.getElementById("name").value.trim();
-  const role = document.getElementById("role").value.trim().toLowerCase();
-  const parentName = document.getElementById("parent").value.trim();
+  const role = document.getElementById("role").value.toLowerCase();
+  const parent = document.getElementById("parent").value || null;
+
+  if (!name) return;
 
   let emoji = "👤";
-  let color = "blue";
+  let color = "black";
 
-  if (role.includes("ayah")) {
-    emoji = "👨";
-    color = "blue";
-  } else if (role.includes("ibu")) {
-    emoji = "👩";
-    color = "red";
-  } else if (role.includes("anak")) {
-    emoji = "👶";
-    color = "green";
-  }
+  if (role.includes("ayah")) { emoji = "👨"; color = "red"; }
+  if (role.includes("ibu"))  { emoji = "👩"; color = "blue"; }
+  if (role.includes("anak")) { emoji = "👧"; color = "green"; }
 
-  let parentNode = familyTree;
-  if (parentName !== "") {
-    parentNode = findNode(familyTree, parentName);
-    if (!parentNode) {
-      alert("Parent tidak ditemukan");
-      return;
-    }
-  }
-
-  parentNode.children.push({
-    text: {
-      name: `${emoji} ${name}`,
-      title: role
-    },
-    HTMLclass: color,
-    children: []
-  });
-
-  saveAndRender();
-  this.reset();
+  nodes.push({ name, emoji, color, parent });
+  save();
+  renderAll();
+  e.target.reset();
 });
 
-/********************************
- * DELETE NODE (FITUR 5)
- ********************************/
-function deleteRecursive(node, name) {
-  if (!node.children) return;
-
-  node.children = node.children.filter(
-    (c) => !c.text.name.toLowerCase().includes(name.toLowerCase())
-  );
-
-  node.children.forEach((c) => deleteRecursive(c, name));
+/* =========================
+   DELETE NODE + ANAKNYA
+========================= */
+function deleteNode(name) {
+  nodes = nodes.filter(n => n.name !== name && n.parent !== name);
+  save();
+  renderAll();
 }
 
-// bisa dipanggil manual dari console:
-// deleteByName("Abdullah")
-window.deleteByName = function (name) {
-  deleteRecursive(familyTree, name);
-  saveAndRender();
-};
-
-/********************************
- * SIMPAN + RENDER (FITUR 4)
- ********************************/
-function saveAndRender() {
-  localStorage.setItem("familyTree", JSON.stringify(familyTree));
-
-  const visual = document.getElementById("visual");
-  let treeDiv = document.getElementById("tree");
-
-  if (!treeDiv) {
-    treeDiv = document.createElement("div");
-    treeDiv.id = "tree";
-    visual.appendChild(treeDiv);
-  }
-
-  treeDiv.innerHTML = "";
-
-  new Treant({
-    chart: {
-      container: "#tree",
-      rootOrientation: "NORTH",
-      connectors: { type: "step" },
-      node: { HTMLclass: "node" }
-    },
-    nodeStructure: familyTree
+/* =========================
+   RENDER LIST (ATAS)
+========================= */
+function renderList() {
+  let html = "<ul>";
+  nodes.forEach(n => {
+    html += `
+      <li style="color:${n.color}">
+        ${n.emoji} ${n.name}
+        <span onclick="deleteNode('${n.name}')" style="cursor:pointer;color:red"> ❌</span>
+      </li>`;
   });
+  html += "</ul>";
+  document.getElementById("list").innerHTML = html;
 }
 
-document.addEventListener("DOMContentLoaded", saveAndRender);
+/* =========================
+   RENDER TREE (POHON BENERAN)
+========================= */
+function renderTree(parent = null) {
+  const children = nodes.filter(n => n.parent === parent);
+  if (!children.length) return "";
+
+  let html = "<ul>";
+  children.forEach(n => {
+    html += `
+      <li>
+        <span style="color:${n.color}">
+          ${n.emoji} ${n.name}
+          <span onclick="deleteNode('${n.name}')" style="cursor:pointer;color:red"> ❌</span>
+        </span>
+        ${renderTree(n.name)}
+      </li>`;
+  });
+  html += "</ul>";
+  return html;
+}
+
+/* =========================
+   RENDER SEMUA
+========================= */
+function renderAll() {
+  renderList();
+  document.getElementById("tree").innerHTML = renderTree();
+}
+
+/* =========================
+   INIT
+========================= */
+renderAll();
